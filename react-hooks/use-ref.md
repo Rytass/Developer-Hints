@@ -84,7 +84,7 @@ function FilesInput() {
 
       {filesToRender.map(fileInfo) => (
         <FileInfoCard
-          key={fileInfo.id} // 非常重要
+          key={fileInfo.key} // 非常重要
           file={fileInfo.file} />
       )}
     </div>
@@ -128,7 +128,7 @@ function RootComponent() {
 ```
 
 ### Variants C
-> 避免 useEffect 在建立元素時被執行
+> 避免 ```useEffect``` 在建立元素時被執行
 
 > 某些狀況下，會希望元件生命週期剛被建立時，不要做某些事，直到某些條件符合後，再開始做。
 
@@ -137,12 +137,12 @@ function RootComponent(props) {
   const { listeningInfo } = props;
   const hasInit = useRef(false);
 
-  // React.RefObject 無視 Virtual DOM 規則，所以無需放進 side-effect dependencyList
+  // React.RefObject 無視 Virtual DOM 規則，所以無需放進 side-effect dependencyList
   useEffect(() => {
     if (hasInit.current) {
-      // do something to  if has init 
+      // do something if has init 
     } else {
-      hasInit.current = true;
+      hasInit.current = true; // 或是進行某些動作來確認是否要更新 是否已達成初始化完畢狀態
     }
   }, [listeningInfo]);
 
