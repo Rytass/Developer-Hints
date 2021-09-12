@@ -9,6 +9,8 @@ function ExampleComponent() {
   const renderTimesCounter = useRef(0);
 
   renderTimesCounter.current += 1;
+
+  console.log('元件渲染次數：', renderTimesCounter.current);
 }
 ```
 
@@ -72,9 +74,14 @@ function FilesInput() {
     });
 
     // 待 filesTemp 同步完最新資料後，統一渲染 '一' 次
+    // 且重新渲染的資料統一從 filesTemp.current 中取得，state 只認這個暫時容器。
     setFilesToRender(Array.from(filesTemp.current));
 
-    // 至於為什麼要再 new Array 一次是因為，如果直接 set filesTemp.current，會使得每次 state 更新都指向 filesTemp.current 的 reference 使得 state 不會被觸發重新渲染，所以需要把最新渲染資料放進不同的 reference 同時給予對應的 uniqueVirtualDomKey，可以保證原先的 component 不會完全因為 reference 不同而重新渲染。
+    // 至於為什麼要再去 new Array 一次是因為
+    // 如果直接 set filesTemp.current，會使得每次 state 更新都指向 filesTemp.current 的 reference
+    // 使得 state 不會被觸發重新渲染，所以需要把最新渲染資料放進不同的 reference (new Array 最快)
+    // 同時給予對應的 uniqueVirtualDomKey，可以保證原先的 mapping 不會完全因為 reference 不同而重新
+    // 渲染舊的 Element。
   }
 
   return (
@@ -102,8 +109,8 @@ function FilesInput() {
 ### Variants B
 > 利用 ```原生javascript``` 操作 DOM。
 
-> 如上述所說，其實 useRef 就是在 React Component 生命週期中，略過 virtual dom 直接使用普通變數。
-所以當有需求要用 原生 js 去 操作 DOM 時，不會希望你在操作時，產生 與 virtual dom 的交互效應 (不然就乖乖用 react 的規則就好了)，所以最快想到應該就是非 useRef 莫屬了。
+> 如上述所說，其實 useRef 就是在 React Component 生命週期中，略過 virtual dom 直接使用的普通變數。
+所以當有需求要用 原生 js 去 操作 DOM 時，不會希望自己在操作時，產生與 virtual dom 的交互效應 (不然就乖乖用 react 的規則就好了)，根據以上條件最快最適合的 React built-in 應該非 useRef 莫屬了。
 
 ```typescript
 function RootComponent() {
@@ -117,7 +124,7 @@ function RootComponent() {
       ref.current.removeEventsListener('click', ...);
     };
   }, []);
-  // 其實直接用 onClick 比較好啦，但如果有奇怪的需求不能用，有可能就會用到
+  // 其實直接用 onClick 是最好的情況，但如果有奇怪的需求或是商業邏輯不能直接用，useRef 可以讓你自由使用 js 做客製化。
 
   return (
     <div ref={ref}>
