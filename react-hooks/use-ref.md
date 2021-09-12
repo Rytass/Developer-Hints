@@ -74,7 +74,7 @@ function FilesInput() {
     // 待 filesTemp 同步完最新資料後，統一渲染 '一' 次
     setFilesToRender(Array.from(filesTemp.current));
 
-    // 至於為什麼要再 new Array 一次是因為，如果直接 set filesTemp.current，會使得每次 state 更新都指向 filesTemp.current 的 reference 使得 state 不會被觸發重新渲染，所以需要把最新渲染資料放進不同的 reference 同時給予對應的 uniqueVirtualDomKey，可以保證原先的 component 不會完全因為reference 不同而重新渲染。
+    // 至於為什麼要再 new Array 一次是因為，如果直接 set filesTemp.current，會使得每次 state 更新都指向 filesTemp.current 的 reference 使得 state 不會被觸發重新渲染，所以需要把最新渲染資料放進不同的 reference 同時給予對應的 uniqueVirtualDomKey，可以保證原先的 component 不會完全因為 reference 不同而重新渲染。
   }
 
   return (
