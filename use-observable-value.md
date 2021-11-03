@@ -22,7 +22,7 @@
 
 1. 較高層級的資料結構只需要，把所有的子元件 onMount 出來，然後每個子元件在 生命週期建立時，透過 ```EventEmitter``` 進行狀態監聽以及通知，透過 ```Observable``` 進行狀態更新時的行為。
 
-2. 透過 ```EventEmitter``` 幫忙監聽狀態，當對應的子元件有狀態變動，可以透過 ```EventEmitter``` 主動通知 ```Observable``` 去更新重渲染對到的元件。因此每個 子元件 都有獨立的狀態 scope，不需要仰賴高層級的元件重繪，達成低層級的狀態更新。
+2. ```EventEmitter``` 負責監聽狀態，當對應的子元件有狀態變動，可以透過 ```EventEmitter``` 主動通知 ```Observable``` 去更新重渲染對到的元件。因此每個 子元件 都有獨立的狀態 scope，不需要仰賴高層級的元件重繪，達成低層級的狀態更新。
 
 > 優劣分析：
 
@@ -61,7 +61,7 @@ export class SelectorStore<T = boolean, R = Error> extends EventEmitter {
   add(requestKey: string, data: T) {
     this._selectorStore.set(requestKey, data);
 
-    /** @INFO 觸發 observable 去更新重新渲染對應 requestKey 的 訂閱元件*/
+    /** @INFO 觸發 observable 去更新重新渲染對應 requestKey 的 訂閱元件 */
     this.emit(`${SelectorStore.Events.UPDATE}:${requestKey}`, data);
   }
 
@@ -124,7 +124,7 @@ export function useIsSelected(selectorId: string) {
     return () => {
       subscription.unsubscribe(); // componentWillUnMount 要取消狀態訂閱狀態，以免發生 memory leak 的狀況。
     };
-  }, [selectionId]);
+  }, [selectorId]);
 
   return isSelected;
 }
